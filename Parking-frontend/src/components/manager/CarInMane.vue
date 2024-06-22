@@ -193,7 +193,31 @@ export default {
             let startTime = new Date(stallRes.createTime);
             let endTime = new Date();
             let hours = (endTime.getTime() - startTime.getTime()) / 3600000;
-            return (Math.floor(hours * 10) / 10) * stallRes.stall.stallMoney;
+            let money;
+            // 计算停车时间跨越的完整月数
+            let startMonth = startTime.getMonth() + 1; // 月份从1开始
+            let startYear = startTime.getFullYear();
+            let endMonth = endTime.getMonth() + 1;
+            let endYear = endTime.getFullYear();
+            let fullMonths = (endYear - startYear) * 12 + (endMonth - startMonth);
+            if (stallRes.stall.stallType==="固定车位"){
+              // 如果停车时间不足一个月，按一个月计算
+              if (fullMonths === 0) {
+                fullMonths = 1;
+              }
+
+              // 计算费用
+              money = fullMonths * stallRes.stall.stallMoney;
+
+            }else{
+              //money = (Math.floor(hours * 10) / 10) * stallRes.stall.stallMoney;
+              if (hours < 0.5) {
+                money = 0;
+              } else {
+                money = Math.ceil(hours) * stallRes.stall.stallMoney;
+              }
+          }
+            return money;
         },
         async opare(stallRes) {
             const re = await this.$confirm(

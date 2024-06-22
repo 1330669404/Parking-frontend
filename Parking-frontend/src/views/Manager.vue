@@ -3,54 +3,51 @@
 
 -->
 <template>
-    <!-- 头部区域 -->
-    <el-container class="home-container">
-        <el-header>
-            <div class="left-logo">
-                <img src="../assets/logo.png"/>
-                <span style="color:#2b5d88;"><h3>停车场管理系统</h3></span>
-            </div>
-            <div style="text-align: right;width: 50%;padding-right: 25px;color: #2b5d88">
+  <!-- 头部区域 -->
+  <el-container class="home-container">
+    <el-header>
+      <div class="left-logo">
+        <img src="../assets/logo.png"/>
+        <span style="color:#2b5d88;"><h3>停车场管理系统</h3></span>
+      </div>
+      <div style="text-align: right;width: 50%;padding-right: 25px;color: #2b5d88">
+        欢迎您，{{ userInfo.nike }}
+      </div>
+      <el-button type="danger" icon="iconfont icon-back-button" @click="logout"> 退出登录</el-button>
+    </el-header>
 
-              欢迎使用，{{ userInfo.nike }}
-            </div>
-            <el-button type="danger" icon="iconfont icon-back-button" @click="logout"> 退出登录</el-button>
-        </el-header>
-        <!-- 页面主体区域 -->
-        <el-container>
-            <!-- 侧边栏 -->
-            <el-aside width="auto">
-                <el-menu
-                    background-color="white"
-                    text-color="black"
-                    active-text-color="grey"
-                    :unique-opened="true"
-                    :collapse-transition="false"
-                    router
-                    :default-active="activePath"
-                >
-                    <!-- 菜单 -->
-                    <el-menu-item
-                        :index="item.path + ''"
-                        v-for="item in menuList"
-                        :key="item.id"
-                        @click="savePath('/' + item.path)"
+    <!-- 水平菜单区域 -->
+    <el-menu
+        :default-active="activePath"
+        class="horizontal-menu"
+        mode="horizontal"
+        background-color="white"
+        text-color="black"
+        active-text-color="#2b5d88"
+        router
+    >
+      <!-- 菜单项 -->
+      <el-menu-item
+          v-for="item in menuList"
+          :key="item.id"
+          :index="'/' + item.path"
+          @click="savePath('/' + item.path)"
+      >
+        <template slot="title">
+          <i :class="item.icon" style="font-size: 22px;color: #2b5d88;"></i>
+          <span><b style="font-size: 14px;color: #2b5d88"> {{ item.name }}</b></span>
+        </template>
+      </el-menu-item>
+    </el-menu>
 
-                    >
-                        <template slot="title">
-                            <i :class="item.icon" style="font-size: 22px;color: #2b5d88;"></i>
-                            <span><b style="font-size: 14px;color: #2b5d88"> {{ item.name }}</b></span>
-                        </template>
-                    </el-menu-item>
-                </el-menu>
-            </el-aside>
-            <!-- 右侧内容主体 -->
-            <el-main>
-                <!-- 路由占位符 -->
-                <router-view></router-view>
-            </el-main>
-        </el-container>
+    <!-- 页面主体区域 -->
+    <el-container>
+      <el-main>
+        <!-- 路由占位符 -->
+        <router-view></router-view>
+      </el-main>
     </el-container>
+  </el-container>
 </template>
 <script>
 import axios from "axios";
@@ -131,49 +128,53 @@ export default {
 </script>
 <style scoped>
 .home-container {
-    height: 100%;
+  height: 100%;
 }
+
 .el-header {
-    background-color: #efe8e8;
-    display: flex;
-    justify-content: space-between;
-    padding-left: 0;
-    align-items: center;
-    color: black;
-    font-size: 20px;
-    border-bottom: 1px solid grey;
+  background-color: #efe8e8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: black;
+  font-size: 20px;
+  border-bottom: 1px solid grey;
 }
+
 .left-logo {
-    height: 100%;
-    display: flex;
-    align-items: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-left: 25px;
 }
+
 .left-logo > span {
-    margin-left: 15px;
+  margin-left: 15px;
 }
+
 .left-logo > img {
-    height: 50%;
-    margin-left: 25px;
+  height: 50px;
 }
-.el-aside {
-    background-color: white;
+
+.horizontal-menu {
+  width: 100%; /* 确保菜单宽度占满容器 */
+  display: flex; /* 使用Flexbox布局 */
+  justify-content: space-between; /* 菜单项平分空间 */
+  background-color: #ffffff;
+  border-bottom: 1px solid #e6e6e6;
 }
-.el-main {
-    background-color: #eaedf1;
+
+.horizontal-menu .el-menu-item {
+  height: 60px;
+  line-height: 60px;
+  flex-grow: 1; /* 使每个菜单项平分空间 */
+  text-align: center; /* 文本居中 */
+  padding: 0 10px; /* 根据需要调整内边距 */
 }
-.el-menu {
-    border-right: none;
+
+.horizontal-menu .el-menu-item:focus,
+.horizontal-menu .el-menu-item:hover {
+  background-color: #f2f2f2 !important;
 }
-.fa {
-    margin-right: 10px;
-}
-.toggle-button {
-    background-color: #4a5064;
-    font-size: 10px;
-    line-height: 24px;
-    color: #fff;
-    text-align: center;
-    letter-spacing: 0.2em;
-    cursor: pointer;
-}
+/* 其他样式... */
 </style>

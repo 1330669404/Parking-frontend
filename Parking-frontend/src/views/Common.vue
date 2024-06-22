@@ -2,53 +2,52 @@
  * 菜单栏
 -->
 <template>
-    <!-- 头部区域 -->
-    <el-container class="home-container">
-        <el-header>
-            <div class="left-logo">
+  <!-- 头部区域 -->
+  <el-container class="home-container">
+    <el-header>
+      <div class="left-logo">
+        <span style="font-size: 20px;color: #2b5d88"><h3>停车场管理系统</h3></span>
+      </div>
+      <div style="text-align: right;width: 50%;padding-right: 25px;color: #2b5d88">
+        欢迎您，{{ userInfo.nike }}
+      </div>
+      <el-button type="danger" icon="iconfont icon-back-button" @click="logout"> 退出登录</el-button>
+    </el-header>
 
-                <span style="font-size: 20px;color: #2b5d88" ><h3>停车场管理系统</h3></span>
-            </div>
-            <div style="text-align: right;width: 50%;padding-right: 25px;color: #2b5d88">
-              欢迎使用，{{ userInfo.nike }}
-            </div>
-            <el-button type="danger" icon="iconfont icon-back-button"  @click="logout"> 退出登录</el-button>
-        </el-header>
-        <!-- 页面主体区域 -->
-        <el-container>
-            <!-- 侧边栏 -->
-            <el-aside width="auto">
-                <el-menu
-                    background-color="white"
-                    text-color="black"
-                    active-text-color="grey"
-                    :unique-opened="true"
-                    :collapse-transition="false"
-                    router
-                    :default-active="activePath"
-                >
-                    <!-- 菜单 -->
-                    <el-menu-item
-                        :index="item.path + ''"
-                        v-for="item in menuList"
-                        :key="item.id"
-                        @click="savePath('/' + item.path)"
-                    >
-                        <template #title>
-                            <i :class="item.icon"  style="font-size: 22px;color: #2b5d88;"></i>
-                            <span><b style="font-size: 14px;color: #2b5d88"> {{ item.name }}</b></span>
-                        </template>
-                    </el-menu-item>
-                </el-menu>
-            </el-aside>
-            <!-- 右侧内容主体 -->
-            <el-main>
-                <!-- 路由占位符 -->
-                <router-view></router-view>
-            </el-main>
-        </el-container>
+    <!-- 水平菜单区域 -->
+    <el-menu
+        :default-active="activePath"
+        class="horizontal-menu"
+        mode="horizontal"
+        background-color="#efe8e8"
+        text-color="black"
+        active-text-color="#2b5d88"
+        router
+    >
+      <!-- 菜单项 -->
+      <el-menu-item
+          v-for="item in menuList"
+          :key="item.id"
+          :index="item.path"
+          @click="savePath(item.path)"
+      >
+        <template #title>
+          <i :class="item.icon" style="font-size: 22px;color: #2b5d88;"></i>
+          <span><b style="font-size: 14px;color: #2b5d88">{{ item.name }}</b></span>
+        </template>
+      </el-menu-item>
+    </el-menu>
+
+    <!-- 页面主体区域 -->
+    <el-container>
+      <el-main>
+        <!-- 路由占位符 -->
+        <router-view></router-view>
+      </el-main>
     </el-container>
+  </el-container>
 </template>
+
 <script>
 import axios from "axios";
 export default {

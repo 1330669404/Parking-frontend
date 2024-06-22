@@ -26,7 +26,7 @@ const routes = [{
         {
             path: '/conmen',
             component: Common,
-            redirect: '/conmenHome',
+            redirect: '/userInfo',
             children:[
                 {
                     path: '/conmenHome',

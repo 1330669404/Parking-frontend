@@ -2,18 +2,18 @@
  * 用户缴费信息
 -->
 <template>
-    <div>
+    <div class="user-fee-info">
         <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item>
               <i class="iconfont icon-stall-fee-menu" style="margin: 5px; font-size: 22px">
                     缴费信息
               </i ></el-breadcrumb-item>
         </el-breadcrumb>
-        <el-card>
+        <el-card class="info-card">
             <el-row>
                 <el-col :span="24">
-                    <div class="left">
-                        <div class="top">
+                    <div class="balance-container">
+                        <div class="balance-title">
                             <el-row>
                                 <el-col :span="24" style="text-align: left">
                                     <i class="iconfont icon-stall-fee-menu"
@@ -22,7 +22,7 @@
                                     </i>
                                 </el-col>
                             </el-row>
-                            <div class="count" v-if="userInfo.money">
+                            <div class="balance-count" v-if="userInfo.money">
                                 <span class="num">￥</span>
                                 <span class="num">{{
                                     userInfo.money.toFixed(2)
@@ -30,7 +30,7 @@
                             </div>
                             <br />
                             <el-button
-                                class="pay-btn"
+                                class="recharge-btn"
                                 style="font-size: 22px"
                                 type="primary"
                                 @click="toPay"
@@ -44,113 +44,56 @@
                     </div>
                 </el-col>
                 <hr />
-                <el-col :span="24">
-                    <div class="bottom">
-                        <el-row>
-                            <el-col :span="24" style="text-align: left">
-                                <i class="iconfont icon-wait-fee"
-                                    style="font-size: 32px; font-weight: 600"
-                                > 待缴费</i>
-                            </el-col>
-                        </el-row>
+              <el-col :span="24">
+                <div class="bottom">
+                  <!-- 待缴费标题 -->
+                  <div class="section-title">
+                    <i class="iconfont icon-wait-fee">待缴费</i>
+                  </div>
 
-                        <el-row style="font-weight: 600; font-size: 22px;margin-top: 10px;">
-                            <el-col :span="6"> 区域 </el-col>
-                            <el-col :span="4"> 车位号 </el-col>
-                            <el-col :span="8"> 时间 </el-col>
-                            <el-col :span="6"> 操作 </el-col>
-                        </el-row>
-                        <el-row v-for="res in dRes" :key="res.id">
-                            <el-col :span="6">
-                                <span class="area">{{
-                                    res.stall.stallArea
-                                }}</span>
-                            </el-col>
-                            <el-col :span="4">
-                                <samp class="stall-num">{{
-                                    res.stall.stallNum
-                                }}</samp>
-                            </el-col>
-                            <el-col :span="8">
-                                <span class="create-time">{{
-                                    res.createTime
-                                }}</span>
-                            </el-col>
-                            <el-col :span="6">
-                                <el-button
-                                    style="margin-top: -15px;font-size: 18px"
-                                    type="success"
-                                    size="type"
-                                    @click="payStall(res)"
-                                    ><i
-                                class="iconfont icon-stall-fee-menu"
-                                style="font-size: 18px"
-                            ></i
-                        > 缴费</el-button
-                                >
-                            </el-col>
-                        </el-row>
-                        <div v-if="dRes.length == 0" class="no-res">
-                            没有相关记录
-                        </div>
-                    </div>
-                </el-col>
+                  <!-- 待缴费表格 -->
+                  <el-table :data="dRes" style="width: 100%; margin-top: 10px;" border>
+                    <el-table-column label="区域" prop="stall.stallArea" width="280"></el-table-column>
+                    <el-table-column label="车位号" prop="stall.stallNum" width="220"></el-table-column>
+                    <el-table-column label="时间" prop="createTime" width="340"></el-table-column>
+                    <el-table-column label="操作" width="200">
+                      <template slot-scope="scope">
+                        <el-button type="success" size="small" @click="payStall(scope.row)">
+                          <i class="iconfont icon-stall-fee-menu"></i> 缴费
+                        </el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+
+                  <!-- 空状态提示 -->
+                  <div v-if="dRes.length === 0" class="no-data">没有待缴费记录</div>
+                </div>
+              </el-col>
                 <hr />
-                <el-col :span="24">
-                    <div class="right">
-                        <el-row>
-                            <el-col :span="24" style="text-align: left">
-                                <i
-                                    class="iconfont icon-wait-fee"
-                                    style="font-size: 32px; font-weight: 600"
-                                >
-                                    缴费记录</i
-                                >
-                            </el-col>
-                        </el-row>
-                        <el-row style="font-weight: 600; font-size: 22px;margin-top: 10px;">
-                            <el-col :span="6"> 区域 </el-col>
-                            <el-col :span="4"> 车位号 </el-col>
-                            <el-col :span="8"> 时间 </el-col>
-                            <el-col :span="6"> 费用 </el-col>
-                        </el-row>
-                        <el-row v-for="item in allStallRes" :key="item.id">
-                            <el-col :span="6">
-                                <span class="area">{{
-                                    item.stall.stallArea
-                                }}</span>
-                            </el-col>
-                            <el-col :span="4">
-                                <samp class="stall-num">{{
-                                    item.stall.stallNum
-                                }}</samp>
-                            </el-col>
-                            <el-col :span="8">
-                                <span class="create-time">{{
-                                    item.createTime
-                                }}</span>
-                            </el-col>
-                            <el-col :span="6">
-                                <span
-                                    class="money"
-                                    v-if="
-                                        item.money != undefined &&
-                                        item.money != null
-                                    "
-                                    >缴费：{{ item.money.toFixed(2) }}元</span
-                                >
-                                <span class="money num-red" v-else
-                                    >待缴费：{{
-                                        feeChange(item).toFixed(2)
-                                    }}元</span
-                                >
-                            </el-col>
-                        </el-row>
-                        <div v-if="allStallRes.length == 0" class="no-res">
-                            没有相关记录
-                        </div>
-                    </div>
-                </el-col>
+              <el-col :span="24">
+                <div class="right">
+                  <!-- 缴费记录标题 -->
+                  <div class="section-title">
+                    <i class="iconfont icon-wait-fee">缴费记录</i>
+                  </div>
+
+                  <!-- 缴费记录表格 -->
+                  <el-table :data="allStallRes" style="width: 100%; margin-top: 10px;" border>
+                    <el-table-column label="区域" prop="stall.stallArea" width="280"></el-table-column>
+                    <el-table-column label="车位号" prop="stall.stallNum" width="220"></el-table-column>
+                    <el-table-column label="时间" prop="createTime" width="340"></el-table-column>
+                    <el-table-column label="费用" width="200">
+                      <template slot-scope="scope">
+                        <span v-if="scope.row.money != null" class="money-paid">缴费：{{ scope.row.money.toFixed(2) }}元</span>
+                        <span v-else class="money-due">待缴费：{{ feeChange(scope.row).toFixed(2) }}元</span>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+
+                  <!-- 空状态提示 -->
+                  <div v-if="allStallRes.length === 0" class="no-data">没有缴费记录</div>
+                </div>
+              </el-col>
             </el-row>
         </el-card>
 
@@ -217,12 +160,39 @@ export default {
                 this.yRes = res.data.data;
             });
         },
-        feeChange(stallRes) {
+          feeChange(stallRes) {
             let startTime = new Date(stallRes.createTime);
             let endTime = new Date();
             let hours = (endTime.getTime() - startTime.getTime()) / 3600000;
-            return (Math.floor(hours * 10) / 10) * stallRes.stall.stallMoney;
-        },
+            let money;
+            // 计算停车时间跨越的完整月数
+            let startMonth = startTime.getMonth() + 1; // 月份从1开始
+            let startYear = startTime.getFullYear();
+            let startDay = startTime.getDate();
+            let endMonth = endTime.getMonth() + 1;
+            let endYear = endTime.getFullYear();
+            let endDay = endTime.getDate();
+            let fullMonths = (endYear - startYear) * 12 + (endMonth - startMonth);
+            if (stallRes.stall.stallType==="固定车位"){
+              // 如果停车时间不足一个月，按一个月计算
+              if (fullMonths === 0) {
+                fullMonths = 1;
+              }
+              if(startYear !== endYear || startMonth !== endMonth && endDay > startDay){
+                fullMonths += 1;
+              }
+              // 计算费用
+              money = fullMonths * stallRes.stall.stallMoney;
+            }else{
+              //money = (Math.floor(hours * 10) / 10) * stallRes.stall.stallMoney;
+              if (hours < 0.01) {
+                money = 0;
+              } else {
+                money = Math.ceil(hours) * stallRes.stall.stallMoney;
+              }
+            }
+            return money;
+          },
         toPay() {
             this.payMoney = "";
             this.payShow = true;
@@ -357,5 +327,81 @@ export default {
     text-align: center;
     color: rgb(203, 199, 199);
     font-size: 24px;
+}
+.user-fee-info {
+  margin: 30px;
+  font-family: 'Arial', sans-serif;
+}
+.info-card {
+  margin-bottom: 20px;
+}
+.balance-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+.balance-title i {
+  font-size: 32px;
+  color: #333;
+}
+.balance-count {
+  font-size: 48px;
+  color: #e75c09;
+  margin-top: 10px;
+}
+.recharge-btn {
+  margin-top: 20px;
+  font-size: 16px;
+}
+.bottom {
+  padding: 20px;
+  box-sizing: border-box; /* 确保padding不影响宽度 */
+}
+.section-title {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.section-title i {
+  margin-right: 10px;
+}
+.no-data {
+  color: #999;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box; /* 确保padding不影响宽度 */
+}
+/* 表格样式 */
+.el-table {
+  width: 100%; /* 再次确保表格宽度 */
+  border: 1px solid #ebeef5; /* 表格边框样式 */
+}
+.el-table__expanded-cell {
+  box-sizing: border-box; /* 确保展开行的padding不影响宽度 */
+}
+.right {
+  padding: 20px;
+  box-sizing: border-box;
+}
+.section-title {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.section-title i {
+  margin-right: 10px;
+}
+.no-data {
+  color: #999;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.money-paid {
+  color: #00a854;
+}
+.money-due {
+  color: #ff4949;
 }
 </style>

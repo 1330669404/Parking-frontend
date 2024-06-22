@@ -2,51 +2,34 @@
  * 登录信息管理
 -->
 <template>
-    <div>
-        <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item><i
-                    class="iconfont icon-log-menu"
-                    style="margin: 5px; font-size: 22px"
-                >
-                    登录日志查询</i></el-breadcrumb-item>
-        </el-breadcrumb>
+  <div class="login-management">
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item><i class="iconfont icon-log-menu">登录日志查询</i></el-breadcrumb-item>
+    </el-breadcrumb>
 
-        <!-- 卡片视图区域 -->
-        <el-card>
-            <el-row :gutter="20">
-                <el-col :span="4">
-                    <el-input
-                        placeholder="用户名"
-                        v-model="queryInfo.person"
-                        clearable
-                    ></el-input>
-                </el-col>
-                <el-col :span="4">
-                    <el-input
-                        placeholder="ip地址"
-                        v-model="queryInfo.ip"
-                        clearable
-                    ></el-input>
-                </el-col>
-                <el-col :span="3">
-                    <el-button
-                        size="small"
-                        type="success"
-                        @click="getList"
-                        icon="iconfont icon-search-menu"
-                        style="font-size: 18px"
-                        > 搜索</el-button
-                    >
-                </el-col>
-            </el-row>
+    <div class="search-bar">
+      <el-row :gutter="20" class="search-area">
+        <el-col :span="6">
+          <el-input placeholder="用户名" v-model="queryInfo.person" clearable></el-input>
+        </el-col>
+        <el-col :span="6">
+          <el-input placeholder="ip地址" v-model="queryInfo.ip" clearable></el-input>
+        </el-col>
+        <el-col :span="6">
+          <el-button type="primary" icon="el-icon-search" @click="getList">搜索</el-button>
+        </el-col>
+      </el-row>
+    </div>
 
-            <el-table v-loading="loading" :data="loginInfos" border stripe>
-                <el-table-column
-                    width="50"
-                    label="序号"
-                    align="center"
-                    type="index"
-                ></el-table-column>
+    <el-card class="card-container">
+      <el-table
+          v-loading="loading"
+          :data="loginInfos"
+          border
+          stripe
+          class="login-table"
+      >
+        <el-table-column width="50" label="序号" align="center" type="index"></el-table-column>
                 <el-table-column
                     label="用户名"
                     prop="person"
@@ -72,20 +55,21 @@
                     prop="loginTime"
                     align="center"
                 ></el-table-column>
-            </el-table>
+      </el-table>
+    </el-card>
 
-            <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="queryInfo.pagenum"
-                :page-sizes="[5, 10, 15, 20]"
-                :page-size="queryInfo.pageSize"
-                layout="total, sizes, prev, pager, next"
-                :total="total"
-            >
-            </el-pagination>
-        </el-card>
-    </div>
+    <el-pagination
+        class="pagination"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="queryInfo.pagenum"
+        :page-sizes="[5, 10, 15, 20]"
+        :page-size="queryInfo.pageSize"
+        layout="total, sizes, prev, pager, next"
+        :total="total"
+    >
+    </el-pagination>
+  </div>
 </template>
 <script>
 import axios from "axios";

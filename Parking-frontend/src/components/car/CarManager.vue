@@ -2,88 +2,51 @@
  * 车位管理
 -->
 <template>
-    <div>
-        <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item
-                ><i
-                    class="iconfont icon-stall-menu"
-                    style="margin: 5px; font-size: 22px"
-                >
-                    车位信息管理</i
-                ></el-breadcrumb-item
-            >
-        </el-breadcrumb>
+  <div class="stall-management">
+    <!-- 面包屑导航 -->
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item>车位信息管理</el-breadcrumb-item>
+    </el-breadcrumb>
+    <!-- 搜索区域 -->
+    <el-row :gutter="20" class="search-area">
+      <el-col :span="4">
+        <el-input placeholder="请输入停车区域" v-model="queryInfo.carArea" clearable></el-input>
+      </el-col>
+      <el-col :span="4">
+        <el-select v-model="queryInfo.carType" placeholder="请选择车位类型" clearable>
+          <el-option v-for="item in carTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="4">
+        <el-select v-model="queryInfo.carState" placeholder="请选择车位状态" clearable>
+          <el-option v-for="item in carStates" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="4">
+        <el-button type="success" icon="el-icon-search" @click="getList">搜索</el-button>
+      </el-col>
+      <el-col :span="2">
+        <el-button type="primary" icon="el-icon-plus" @click="addCar">新增</el-button>
+      </el-col>
+    </el-row>
 
-        <!-- 卡片视图区域 -->
-        <el-card>
-            <el-row :gutter="20">
-                <el-col :span="4">
-                    <el-input
-                        v-model="queryInfo.carArea"
-                        placeholder="请输入停车区域"
-                    >
-                    </el-input>
-                </el-col>
-                <el-col :span="4">
-                    <el-select
-                        v-model="queryInfo.carType"
-                        placeholder="请选择车位类型"
-                    >
-                        <el-option
-                            v-for="item in carTypes"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        ></el-option>
-                    </el-select>
-                </el-col>
-                <el-col :span="4">
-                    <el-select
-                        v-model="queryInfo.carState"
-                        placeholder="请选择车位状态"
-                    >
-                        <el-option
-                            v-for="item in carStates"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        ></el-option>
-                    </el-select>
-                </el-col>
-                <el-col :span="2">
-                    <el-button
-                        size="small"
-                        type="success"
-                        icon="iconfont icon-search-menu"
-                        style="font-size: 18px"
-                        @click="getList"
-                    >
-                        搜索</el-button
-                    >
-                </el-col>
-                <el-col :span="2">
-                    <el-button
-                        size="small"
-                        type="primary"
-                        icon="iconfont icon-add-button"
-                        style="font-size: 18px"
-                        @click="addCar"
-                    >
-                        新增</el-button
-                    >
-                </el-col>
-            </el-row>
-
-            <!-- 车位信息区域 -->
-            <el-table v-loading="loading" :data="cars" border stripe>
-                <el-table-column
-                    width="50"
-                    label="序号"
-                    align="center"
-                    type="index"
-                ></el-table-column>
-                <el-table-column label="车位号" prop="stallNum" align="center">
-                </el-table-column>
+    <!-- 车位信息表格 -->
+    <el-table
+        v-loading="loading"
+        :data="cars"
+        border
+        stripe
+        style="width: 100%"
+    >
+      <!-- 表格列定义 -->
+      <el-table-column
+          width="50"
+          label="序号"
+          align="center"
+          type="index">
+      </el-table-column>
+      <el-table-column label="车位号" prop="stallNum" align="center">
+      </el-table-column>
                 <el-table-column
                     label="车位区域"
                     prop="stallArea"
@@ -107,9 +70,15 @@
                     prop="stallMoney"
                     align="center"
                 >
-                    <template slot-scope="scope">
-                        {{ scope.row.stallMoney }}元/时
-                    </template>
+                  <template slot-scope="scope">
+                    <!-- 根据车位类型显示不同的文本 -->
+                    <div v-if="scope.row.stallType === '临时车位'">
+                      {{ scope.row.stallMoney }}元/时
+                    </div>
+                    <div v-else>
+                      {{ scope.row.stallMoney }}元/月
+                    </div>
+                  </template>
                 </el-table-column>
                 <el-table-column
                     label="操作"
@@ -140,24 +109,26 @@
                 </el-table-column>
             </el-table>
 
-            <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="queryInfo.pagenum"
-                :page-sizes="[5, 10, 15, 20]"
-                :page-size="queryInfo.pageSize"
-                layout="total, sizes, prev, pager, next"
-                :total="total"
-            >
-            </el-pagination>
-        </el-card>
-        <el-dialog
-            title="新增车位"
-            :visible.sync="addShow"
-            width="500px"
-            center
-            @close="addClose"
-        >
+    <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="queryInfo.pagenum"
+        :page-sizes="[5, 10, 15, 20]"
+        :page-size="queryInfo.pageSize"
+        layout="total, sizes, prev, pager, next"
+        :total="total"
+    >
+    </el-pagination>
+
+    <!-- 对话框组件 -->
+    <!-- 新增车位对话框 -->
+    <el-dialog
+        title="新增车位"
+        :visible.sync="addShow"
+        width="500px"
+        center
+        @close="addClose"
+    >
             <!-- 内容主题区域 -->
             <el-form
                 :model="registerCar"
@@ -215,15 +186,16 @@
                     >确认添加</el-button
                 >
             </span>
-        </el-dialog>
+    </el-dialog>
 
-        <el-dialog
-            title="修改车位"
-            :visible.sync="editShow"
-            width="500px"
-            center
-            @close="editClose"
-        >
+    <!-- 修改车位对话框 -->
+    <el-dialog
+        title="修改车位"
+        :visible.sync="editShow"
+        width="500px"
+        center
+        @close="editClose"
+    >
             <!-- 内容主题区域 -->
             <el-form
                 :model="editCar"
@@ -523,3 +495,13 @@ export default {
     },
 };
 </script>
+<script setup>
+</script>
+<style scoped>
+.stall-management {
+  margin: 20px;
+}
+.search-area {
+  margin-bottom: 20px;
+}
+</style>

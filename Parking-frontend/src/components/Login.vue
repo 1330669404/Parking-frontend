@@ -160,6 +160,22 @@ export default {
                     });
             }, 10);
         };
+      var checkCarNumber = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error("车牌号不能为空"));
+        }
+        setTimeout(() => {
+          axios
+              .get("/api/user/checkCard?card=" + value)
+              .then((res) => {
+                if (!res.data.data) {
+                  callback(new Error("车牌号已存在"));
+                } else {
+                  callback();
+                }
+              });
+        }, 10);
+      };
         var checkAge = (rule, value, callback) => {
             if (!value) {
                 return callback(new Error("年龄不能为空"));
@@ -246,13 +262,7 @@ export default {
                         trigger: "blur",
                     },
                 ],
-                card: [
-                    {
-                        required: true,
-                        message: "请输入车牌号",
-                        trigger: "blur",
-                    },
-                ],
+               card: [{validator: checkCarNumber, trigger: "blur"}],
                 nike: [
                     {
                         required: true,
